@@ -46,7 +46,7 @@ const User = () => {
       <Card>
         <CardContent>
           <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
+            <TableCaption>A list of your recent invoices....</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead >Role</TableHead>
