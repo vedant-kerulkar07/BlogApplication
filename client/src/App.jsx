@@ -4,8 +4,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout/Layout'
 import { RouteAddCategory, RouteBlog, RouteBlogAdd, RouteBlogByCategory, RouteBlogDetails, RouteBlogEdit, RouteCategoryDetails, RouteCommentDetails, RouteEditCategory, RouteIndex, RouteProfile, RouteSearch, RouteSignIn, RouteSignUp, RouteUser } from './helpers/RouteName'
 import Index from './pages/Index'
-import SignIn from './pages/Signin'
-import SignUp from './pages/SignUp'
 import Profile from './pages/Profile'
 import CategoryDetails from './pages/Category/CategoryDetails'
 import AddCategory from './pages/Category/AddCategory'
@@ -20,6 +18,8 @@ import Comments from './pages/Comments'
 import User from './pages/User'
 import AuthRouteProtection from './components/AuthRouteProtection'
 import OnlyAdminAllowed from './components/OnlyAdminAllowed'
+import SignIn from './pages/SignIn'
+import SignUp from './pages/SignUp'
 
 const App = () => {
   return (
