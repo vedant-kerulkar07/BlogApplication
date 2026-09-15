@@ -29,20 +29,20 @@ const SingleBlogDetails = () => {
                         <div className='flex justify-between items-center'>
                             <div className='flex justify-between items-center gap-5'>
                                 <Avatar className="w-12 h-12 relative group rounded">
-                                    <AvatarImage src={data.blog.author.avatar} />
+                                    <AvatarImage src={data.blog.author?.avatar} />
                                 </Avatar>
 
                                 <div>
-                                    <h2 className='text-2xl font-bold line-clamp-2'>{data.blog.author.name}</h2>
+                                    <h2 className='text-2xl font-bold line-clamp-2'>{data.blog.author?.name}</h2>
                                     <p className='flex items-center gap-2 mb-2'>
                                         <BsCalendar2Date />
-                                        <span>{moment(data.blog.createdAt).format('DD-MM-YYYY')}</span>
+                                        <span>{moment(data.blog?.createdAt).format('DD-MM-YYYY')}</span>
                                     </p>
                                 </div>
                             </div>
                         <div className='flex justify-between items-center gap-5'>
-                            <LikeCount props={{blogid:data.blog._id}}/>
-                            <CommentCount props={{blogid:data.blog._id}}/>
+                            <LikeCount props={{blogid:data.blog?._id}}/>
+                            <CommentCount props={{blogid:data.blog?._id}}/>
                         </div>
                         </div>
                         <div className='my-5'>
@@ -50,7 +50,7 @@ const SingleBlogDetails = () => {
                                 className='rounded'
                             />
                         </div>
-                        <div dangerouslySetInnerHTML={{ __html: decode(data.blog.blogContent) || '' }}>
+                        <div dangerouslySetInnerHTML={{ __html: decode(data.blog?.blogContent) || '' }}>
                         </div>
                         <div className='border-t mt-5 pt-5'>
                             <Comment props={{ blogid: data.blog._id }} />
