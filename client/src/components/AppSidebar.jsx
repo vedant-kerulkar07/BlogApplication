@@ -66,8 +66,8 @@ const AppSidebar = () => {
               <></>
             }
 
-            {user && user.isLoggedIN && user.user.role === 'admin'
-              ? <>
+            {user?.isLoggedIN && user?.user?.role === 'admin' && (
+              <>
                 <SidebarMenuItem>
                   <SidebarMenuButton>
                     <FaUsers />
@@ -81,9 +81,8 @@ const AppSidebar = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </>
-              :
-              <></>
-            }
+            )}
+
 
           </SidebarMenu>
         </SidebarGroup>

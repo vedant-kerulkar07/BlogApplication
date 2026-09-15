@@ -1,277 +1,673 @@
-import React, { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { z } from 'zod'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from 'react-hook-form'
-import { Card, CardContent } from '@/components/ui/card'
-import slugify from 'slugify'
-import { showToast } from '@/helpers/showToast'
-import { getEnv } from '@/helpers/getEnv'
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Card, CardContent } from "@/components/ui/card";
+import slugify from "slugify";
+import { showToast } from "@/helpers/showToast";
+import { getEnv } from "@/helpers/getEnv";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import { useFetch } from '@/hooks/useFetch'
-import Dropzone from 'react-dropzone'
-import Editor from '@/components/Editor'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { RouteBlog } from '@/helpers/RouteName'
-import Loading from '@/components/Loading'
-import { toast } from 'react-toastify'
-
+} from "@/components/ui/select";
+import { useFetch } from "@/hooks/useFetch";
+import Dropzone from "react-dropzone";
+import Editor from "@/components/Editor";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RouteBlog } from "@/helpers/RouteName";
+import Loading from "@/components/Loading";
+import { toast } from "react-toastify";
+import { marked } from "marked";
 
 const AddBlog = () => {
-    const navigate = useNavigate()
-    const user = useSelector((state) => state.user)
-    const { data: categoryData, loading, error } = useFetch(`${getEnv('VITE_API_BASE_URL')}/category/all-category`, {
-        method: 'get',
-        Credential: 'include'
-    })
+    const navigate = useNavigate();
 
+    const user = useSelector((state) => state.user);
 
-    const [filePreview, setPreview] = useState()
-    const [file, setFile] = useState()
+    const {
+        data: categoryData,
+        loading,
+        error,
+    } = useFetch(
+        `${getEnv("VITE_API_BASE_URL")}/category/all-category`,
+        {
+            method: "GET",
+            credentials: "include",
+        }
+    );
+
+    const [filePreview, setPreview] = useState(null);
+    const [file, setFile] = useState(null);
     const [generating, setGenerating] = useState(false);
 
-    const formSchema = z.object({
+    // --------------------------------
+    // Form Schema
+    // --------------------------------
 
-        category: z.string(),
-        title: z.string().min(3, 'Title must be at least 3 character long'),
-        slug: z.string().min(3, 'slug must be at least 3 character long'),
-        blogContent: z.string().min(3, 'Blog content must be at least 3 character long'),
-    })
+    const formSchema = z.object({
+        category: z.string().min(1, "Please select a category"),
+
+        title: z
+            .string()
+            .min(3, "Title must be at least 3 characters long"),
+
+        slug: z
+            .string()
+            .min(3, "Slug must be at least 3 characters long"),
+
+        blogContent: z
+            .string()
+            .min(
+                3,
+                "Blog content must be at least 3 characters long"
+            ),
+    });
 
     const form = useForm({
         resolver: zodResolver(formSchema),
+
         defaultValues: {
-
-            category: '',
-            title: '',
-            slug: '',
-            blogContent: '',
-
+            category: "",
+            title: "",
+            slug: "",
+            blogContent: "",
         },
-    })
+    });
 
-    // const handleEditorData = (event, editor) => {
-    //     const data = editor.getData()
-    //     form.setValue('blogContent', data.content)
-    // }
+    // --------------------------------
+    // Watch Blog Title
+    // --------------------------------
 
-    const blogTitle = form.watch('title')
+    const blogTitle = form.watch("title");
+
+    // --------------------------------
+    // Automatically Generate Slug
+    // --------------------------------
 
     useEffect(() => {
-
         if (blogTitle) {
-            const slug = slugify(blogTitle, { lower: true })
-            form.setValue('slug', slug)
+            const slug = slugify(blogTitle, {
+                lower: true,
+                strict: true,
+            });
+
+            form.setValue("slug", slug);
+        } else {
+            form.setValue("slug", "");
         }
-    }, [blogTitle])
+    }, [blogTitle, form]);
+
+    // --------------------------------
+    // Generate Blog Content using Groq
+    // --------------------------------
 
     const generateContent = async () => {
         try {
-            const title = form.watch('title');
-            if (!title) {
-                return toast.error("Please enter a title first");
+            const title = form.getValues("title");
+
+            if (!title || !title.trim()) {
+                return toast.error(
+                    "Please enter a blog title first"
+                );
             }
-            setGenerating(true)
-            const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/blog/generate-content`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ prompt: title })
-            });
+
+            setGenerating(true);
+
+            console.log("🤖 Generating blog content...");
+            console.log("Blog title:", title);
+
+            const response = await fetch(
+                `${getEnv(
+                    "VITE_API_BASE_URL"
+                )}/blog/generate-content`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+
+                    credentials: "include",
+
+                    body: JSON.stringify({
+                        prompt: title.trim(),
+                    }),
+                }
+            );
 
             const data = await response.json();
-            console.log(data);
+
+            console.log("AI Response:", data);
+
             if (!response.ok) {
-                return toast.error(data.message);
+                return toast.error(
+                    data.message ||
+                    "Failed to generate blog content"
+                );
             }
 
-            form.setValue('blogContent', data.content);
+            if (!data.content) {
+                return toast.error(
+                    "AI did not return any blog content"
+                );
+            }
+
+            const htmlContent = marked.parse(data.content);
+
+            console.log(
+                "✅ Markdown converted to HTML"
+            );
+
+            console.log(
+                "Generated HTML:",
+                htmlContent
+            );
+
+            form.setValue(
+                "blogContent",
+                htmlContent,
+                {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                }
+            );
+
+            toast.success(
+                "Blog content generated successfully"
+            );
+
         } catch (error) {
-            toast.error(error.message || "Failed to generate content");
+            console.error(
+                "❌ Generate content frontend error:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Failed to generate blog content"
+            );
+
         } finally {
             setGenerating(false);
         }
     };
 
+    // --------------------------------
+    // Submit Blog
+    // --------------------------------
 
     async function onSubmit(values) {
         try {
-            const newValues = { ...values, author: user.user._id }
-
+            // Check image
             if (!file) {
-                showToast('error', 'Feature image required')
+                return showToast(
+                    "error",
+                    "Feature image is required"
+                );
             }
-            setGenerating(true)
-            const formData = new FormData()
-            formData.append('file', file)
-            formData.append('data', JSON.stringify(newValues))
-            const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/blog/add/`, {
-                method: 'post',
-                credentials: 'include',
-                body: formData
-            })
 
-            const data = await response.json()
+            // Check user
+            if (!user?.user?._id) {
+                return showToast(
+                    "error",
+                    "User information not found. Please login again."
+                );
+            }
+
+            const newValues = {
+                ...values,
+                author: user.user._id,
+            };
+
+            setGenerating(true);
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+            formData.append(
+                "data",
+                JSON.stringify(newValues)
+            );
+
+            // KEEPING YOUR ORIGINAL API ENDPOINT
+            const response = await fetch(
+                `${getEnv("VITE_API_BASE_URL")}/blog/add/`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    body: formData,
+                }
+            );
+
+            const data = await response.json();
+
+            console.log(
+                "Blog submit response:",
+                data
+            );
 
             if (!response.ok) {
-                return showToast('error', data.message)
+                return showToast(
+                    "error",
+                    data.message ||
+                    "Failed to create blog"
+                );
             }
-            form.reset()
-            setFile()
-            setPreview()
-            navigate(RouteBlog)
-            showToast('success', data.message)
+
+            // Reset form
+            form.reset();
+
+            setFile(null);
+            setPreview(null);
+
+            // Redirect
+            navigate(RouteBlog);
+
+            showToast(
+                "success",
+                data.message ||
+                "Blog created successfully"
+            );
 
         } catch (error) {
-            showToast('error', error.message)
+            console.error(
+                "❌ Blog submit error:",
+                error
+            );
+
+            showToast(
+                "error",
+                error.message ||
+                "Failed to create blog"
+            );
+
         } finally {
             setGenerating(false);
         }
     }
 
     const handleFileSelection = (files) => {
-        const file = files[0]
-        const preview = URL.createObjectURL(file)
-        setFile(file)
-        setPreview(preview)
+        if (!files || files.length === 0) {
+            return;
+        }
+
+        const selectedFile = files[0];
+
+        const preview = URL.createObjectURL(
+            selectedFile
+        );
+
+        setFile(selectedFile);
+        setPreview(preview);
+    };
+
+    if (loading) {
+        return <Loading />;
     }
-    if (loading) return <Loading />
+
     return (
         <div>
-            <Card className='pt-5 '>
+            <Card className="pt-5">
                 <CardContent>
-                    <h1 className='text-2xl font-bold mb-4'>Add Blog</h1>
+
+                    <h1 className="text-2xl font-bold mb-4">
+                        Add Blog
+                    </h1>
+
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <div className='mb-3'>
+                        <form
+                            onSubmit={form.handleSubmit(
+                                onSubmit
+                            )}
+                        >
+
+                            {/* Category */}
+
+                            <div className="mb-3">
+
                                 <FormField
                                     control={form.control}
                                     name="category"
+
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Category</FormLabel>
+
+                                            <FormLabel>
+                                                Category
+                                            </FormLabel>
+
                                             <FormControl>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+
+                                                <Select
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    value={
+                                                        field.value
+                                                    }
+                                                >
+
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Select" />
+                                                        <SelectValue placeholder="Select category" />
                                                     </SelectTrigger>
+
                                                     <SelectContent>
-                                                        {categoryData && categoryData.category.length > 0 && categoryData.category.map(category =>
-                                                            <SelectItem key={category._id} value={category._id}>{category.name}</SelectItem>
+
+                                                        {categoryData?.category?.length >
+                                                            0 ? (
+
+                                                            categoryData.category.map(
+                                                                (
+                                                                    category
+                                                                ) => (
+                                                                    <SelectItem
+                                                                        key={
+                                                                            category._id
+                                                                        }
+                                                                        value={
+                                                                            category._id
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            category.name
+                                                                        }
+                                                                    </SelectItem>
+                                                                )
+                                                            )
+
+                                                        ) : (
+
+                                                            <SelectItem
+                                                                value="no-category"
+                                                                disabled
+                                                            >
+                                                                No categories
+                                                                available
+                                                            </SelectItem>
+
                                                         )}
 
                                                     </SelectContent>
+
                                                 </Select>
+
                                             </FormControl>
+
                                             <FormMessage />
+
                                         </FormItem>
                                     )}
                                 />
+
                             </div>
-                            <div className='mb-3'>
+
+
+                            {/* Title */}
+
+                            <div className="mb-3">
+
                                 <FormField
                                     control={form.control}
                                     name="title"
+
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Title</FormLabel>
+
+                                            <FormLabel>
+                                                Title
+                                            </FormLabel>
+
                                             <FormControl>
-                                                <Input placeholder="Enter your title" {...field} />
+
+                                                <Input
+                                                    placeholder="Enter your blog title"
+                                                    {...field}
+                                                />
+
                                             </FormControl>
+
                                             <FormMessage />
+
                                         </FormItem>
                                     )}
                                 />
+
                             </div>
-                            <div className='mb-3'>
+
+
+                            {/* Slug */}
+
+                            <div className="mb-3">
+
                                 <FormField
                                     control={form.control}
                                     name="slug"
+
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Slug</FormLabel>
+
+                                            <FormLabel>
+                                                Slug
+                                            </FormLabel>
+
                                             <FormControl>
-                                                <Input placeholder="Slug" {...field} />
+
+                                                <Input
+                                                    placeholder="Slug"
+                                                    {...field}
+                                                />
+
                                             </FormControl>
+
                                             <FormMessage />
+
                                         </FormItem>
                                     )}
                                 />
+
                             </div>
-                            <div>
-                                <span className='mb-2 block'>Featured Image</span>
-                                <Dropzone onDrop={acceptedFiles => handleFileSelection(acceptedFiles)}>
-                                    {({ getRootProps, getInputProps }) => (
-                                        <div {...getRootProps()}>
-                                            <input {...getInputProps()} />
-                                            <div className='flex justify-center items-center w-36 h-28 border-2 border-dashboard rounded'>
-                                                <img src={filePreview} />
+
+
+                            {/* Featured Image */}
+
+                            <div className="mb-5">
+
+                                <span className="mb-2 block font-medium">
+                                    Featured Image
+                                </span>
+
+                                <Dropzone
+                                    onDrop={
+                                        handleFileSelection
+                                    }
+                                    accept={{
+                                        "image/*": [],
+                                    }}
+                                    maxFiles={1}
+                                >
+
+                                    {({
+                                        getRootProps,
+                                        getInputProps,
+                                    }) => (
+
+                                        <div
+                                            {...getRootProps()}
+                                            className="cursor-pointer"
+                                        >
+
+                                            <input
+                                                {...getInputProps()}
+                                            />
+
+                                            <div className="flex justify-center items-center w-36 h-28 border-2 border-dashed border-dashboard rounded overflow-hidden">
+
+                                                {filePreview ? (
+
+                                                    <img
+                                                        src={
+                                                            filePreview
+                                                        }
+                                                        alt="Featured preview"
+                                                        className="w-full h-full object-cover"
+                                                    />
+
+                                                ) : (
+
+                                                    <span className="text-sm text-gray-500 text-center px-2">
+
+                                                        Click or
+                                                        drop image
+
+                                                    </span>
+
+                                                )}
+
                                             </div>
+
                                         </div>
                                     )}
-                                </Dropzone>
-                                <div>
-                                    <FormField
-                                        control={form.control}
-                                        name="blogContent"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <div className='p-2 justify-center items-center mb-2'>
-                                                    <Button
-                                                        type="button"
-                                                        size="sm"
-                                                        onClick={() => generateContent(form.watch('title'))}
-                                                    >
-                                                        {generating && <Loading className="ml-2" />
-                                                            ?
-                                                            "Generating..."
-                                                            :
-                                                            "Generate Blog Description"
 
-                                                        }
-                                                    </Button>
-                                                </div>
-                                                <FormControl>
-                                                    <Editor
-                                                        props={{
-                                                            initialData: field.value,
-                                                            onChange: (event, editor) => {
-                                                                const data = editor.getData();
-                                                                field.onChange(data);
-                                                            }
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                </Dropzone>
+
                             </div>
-                            <Button type="submit" className="w-full">
-                                {generating && <Loading className="ml-2" />
-                                    ?
-                                    "Submitting..."
-                                    :
-                                    "Submit"
+
+
+                            {/* Blog Content */}
+
+                            <div className="mb-5">
+
+                                <FormField
+                                    control={form.control}
+                                    name="blogContent"
+
+                                    render={({ field }) => (
+
+                                        <FormItem>
+
+                                            {/* AI Generate Button */}
+
+                                            <div className="mb-3">
+
+                                                <Button
+                                                    type="button"
+                                                    size="sm"
+                                                    onClick={
+                                                        generateContent
+                                                    }
+                                                    disabled={
+                                                        generating
+                                                    }
+                                                >
+
+                                                    {generating ? (
+
+                                                        <>
+
+                                                            <Loading className="mr-2" />
+
+                                                            Generating...
+
+                                                        </>
+
+                                                    ) : (
+
+                                                        "Generate Blog Description"
+
+                                                    )}
+
+                                                </Button>
+
+                                            </div>
+
+
+                                            {/* Editor */}
+
+                                            <FormControl>
+
+                                                <Editor
+                                                    props={{
+                                                        initialData:
+                                                            field.value,
+
+                                                        onChange: (
+                                                            event,
+                                                            editor
+                                                        ) => {
+
+                                                            const data =
+                                                                editor.getData();
+
+                                                            field.onChange(
+                                                                data
+                                                            );
+
+                                                        },
+                                                    }}
+                                                />
+
+                                            </FormControl>
+
+                                            <FormMessage />
+
+                                        </FormItem>
+                                    )}
+                                />
+
+                            </div>
+
+
+                            {/* Submit */}
+
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={
+                                    generating
                                 }
+                            >
+
+                                {generating ? (
+
+                                    <>
+
+                                        <Loading className="mr-2" />
+
+                                        Submitting...
+
+                                    </>
+
+                                ) : (
+
+                                    "Submit"
+
+                                )}
+
                             </Button>
+
                         </form>
+
                     </Form>
+
                 </CardContent>
             </Card>
         </div>
-    )
-}
+    );
+};
 
-export default AddBlog
+export default AddBlog;

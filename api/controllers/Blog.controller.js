@@ -1,23 +1,41 @@
-import { handleError } from "../helpers/handleError.js"
 import Blog from "../models/blog.model.js"
 import cloudinary from "../config/cloudinary.js"
 import { encode } from "entities"
 import Category from "../models/category.modle.js"
-import main from "../config/gemini.js"
+import main from "../config/groq.js"
+import { handleError } from "../helpers/handleError.js"
+
+
 export const addBlog = async (req, res, next) => {
     try {
-        const data = JSON.parse(req.body.data)
-        let featuredImage = ''
+        const data = JSON.parse(req.body.data);
+
+        // Check if slug already exists
+        const existingBlog = await Blog.findOne({
+            slug: data.slug,
+        });
+
+        if (existingBlog) {
+            return next(
+                handleError(
+                    409,
+                    "A blog with this slug already exists. Please use a different title."
+                )
+            );
+        }
+
+        let featuredImage = "";
+
         if (req.file) {
-            const uploadResult = await cloudinary.uploader
-                .upload(req.file.path, {
-                    folder: 'mern-blog',
-                    resource_type: 'auto'
-                })
-                .catch((error) => {
-                    return next(handleError(500, error.message))
-                });
-            featuredImage = uploadResult.secure_url
+            const uploadResult = await cloudinary.uploader.upload(
+                req.file.path,
+                {
+                    folder: "mern-blog",
+                    resource_type: "auto",
+                }
+            );
+
+            featuredImage = uploadResult.secure_url;
         }
 
         const blog = new Blog({
@@ -25,20 +43,35 @@ export const addBlog = async (req, res, next) => {
             category: data.category,
             title: data.title,
             slug: data.slug,
-            featuredImage: featuredImage,
+            featuredImage,
             blogContent: encode(data.blogContent),
+        });
 
-        })
-        await blog.save()
+        await blog.save();
 
-        res.status(200).json({
+        return res.status(201).json({
             success: true,
-            message: 'Blog added successfully'
-        })
+            message: "Blog added successfully",
+        });
+
     } catch (error) {
-        next(handleError(500, error.message))
+        console.error("❌ ADD BLOG ERROR:", error);
+
+        // Handle MongoDB duplicate key error
+        if (error.code === 11000) {
+            return next(
+                handleError(
+                    409,
+                    "A blog with this slug already exists."
+                )
+            );
+        }
+
+        return next(handleError(500, error.message));
     }
-}
+};
+
+
 export const editBlog = async (req, res, next) => {
     try {
         const { blogid } = req.params
@@ -187,15 +220,36 @@ export const getAllBlogs = async (req, res, next) => {
     }
 }
 
+
 export const generateContent = async (req, res, next) => {
     try {
-        const { prompt } = req.body
-        const content = await main(prompt + 'Generate a blog content for this topic in simple text format')
-        res.status(200).json({
+        console.log("➡️ Generate content API called");
+
+        const { prompt } = req.body;
+
+        console.log("📝 Prompt received:", prompt);
+
+        if (!prompt || !prompt.trim()) {
+            return next(handleError(400, "Prompt is required"));
+        }
+
+        const content = await main(prompt);
+
+        console.log("✅ Content generated successfully");
+
+        return res.status(200).json({
             success: true,
-            content
-        })
+            content,
+        });
+
     } catch (error) {
-        next(handleError(500, error.message))
+        console.error("❌ Generate Content Error:", error);
+
+        return next(
+            handleError(
+                500,
+                error.message || "Failed to generate blog content"
+            )
+        );
     }
-}
+};
