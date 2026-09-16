@@ -9,10 +9,11 @@ import { getEnv } from '@/helpers/getEnv';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/redux/user/user.slice';
+
 const GoogleLogin = () => {
   const dispath = useDispatch()
   const navigate = useNavigate()
-  
+
   const handleLogin = async () => {
     try {
       const googleResponse = await signInWithPopup(auth, provider)
@@ -44,8 +45,12 @@ const GoogleLogin = () => {
   }
 
   return (
-    <Button variant="outline" className="w-full" onClick={handleLogin}>
-      <FcGoogle />
+    <Button
+      variant="outline"
+      className="w-full border-[#EADFD3] text-[#4A3728] bg-white hover:bg-[#FFF9F2] hover:text-[#4A3728] gap-2"
+      onClick={handleLogin}
+    >
+      <FcGoogle className="text-lg shrink-0" />
       Continue with Google
     </Button>
   )

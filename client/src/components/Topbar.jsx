@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { IoLogIn } from "react-icons/io5";
 import SearchBox from './SearchBox';
 import { RouteBlogAdd, RouteIndex, RouteProfile, RouteSignIn } from '@/helpers/RouteName';
-import {useDispatch, useSelector} from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,98 +27,98 @@ import { TbMenu4 } from "react-icons/tb";
 import { useSidebar } from './ui/sidebar';
 
 const Topbar = () => {
-  const {toggleSidebar}=useSidebar()
+  const { toggleSidebar } = useSidebar()
   const [searchVisible, setSearchVisible] = useState(false)
   const dispath = useDispatch()
   const navigate = useNavigate()
   const user = useSelector((state) => state.user)
 
-  const handleLogout = async ()=>{
-     try {
-          const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/auth/logout`, {
-            method: 'get',
-            credentials: 'include',
-          })
-    
-          const data = await response.json()
-    
-          if (!response.ok) {
-           return showToast('error', data.message)
-          }
-          dispath(removeUser())
-          navigate(RouteIndex)
-          showToast('success', data.message)
-    
-        } catch (error) {
-          showToast('error', error.message)
-        }
-      }
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/auth/logout`, {
+        method: 'get',
+        credentials: 'include',
+      })
 
-      const toggleSearch = () => {
-        setSearchVisible(!searchVisible)
-        
+      const data = await response.json()
+
+      if (!response.ok) {
+        return showToast('error', data.message)
       }
+      dispath(removeUser())
+      navigate(RouteIndex)
+      showToast('success', data.message)
+
+    } catch (error) {
+      showToast('error', error.message)
+    }
+  }
+
+  const toggleSearch = () => {
+    setSearchVisible(!searchVisible)
+  }
 
   return (
-    <div className='flex justify-between item-center h-16 fixed w-full z-20 bg-white px-5 border-b'>
-      <div className='flex justify-center items-center gap-2'>
-        <button onClick={toggleSidebar} type='button' className='md:hidden'>
-          <TbMenu4/>
+    <div className='flex justify-between items-center h-16 fixed w-full z-20 bg-[#FFF9F2] px-3 sm:px-5 border-b border-[#EADFD3]'>
+      <div className='flex justify-center items-center gap-2 shrink-0'>
+        <button onClick={toggleSidebar} type='button' className='md:hidden text-[#4A3728]'>
+          <TbMenu4 size={22} />
         </button>
         <Link to={RouteIndex}>
-        <img src={logo} className='md:w-auto w-48' />
+          <img src={logo} className='md:w-auto w-36 sm:w-48' />
         </Link>
-        
       </div>
-      <div className='w-[500px]'>
-        <div className={`md:relative md:block absolute bg-white left-0 w-full md:top-0 top-16 md:p-0 p-1 
+
+      <div className='flex-1 max-w-[500px] mx-2 sm:mx-4'>
+        <div className={`md:relative md:block absolute bg-[#FFF9F2] left-0 w-full md:top-0 top-16 md:p-0 p-2 border-b md:border-b-0 border-[#EADFD3]
           ${searchVisible ? 'block' : 'hidden'}`}>
           <SearchBox />
         </div>
-        
       </div>
-      <div className='flex items-center gap-5'>
 
-          <button onClick={toggleSearch} type='button' className='md:hidden block'>
-            <FaSearch size={25}/>
-          </button>
+      <div className='flex items-center gap-3 sm:gap-5 shrink-0'>
+
+        <button onClick={toggleSearch} type='button' className='md:hidden block text-[#4A3728]'>
+          <FaSearch size={20} />
+        </button>
 
         {!user.isLoggedIN ?
-          <Button asChild className='rounded-full'>
-            <Link to={RouteSignIn}>
+          <Button asChild className='rounded-full bg-[#D97748] hover:bg-[#c2663d] text-white text-sm sm:text-base px-3 sm:px-4'>
+            <Link to={RouteSignIn} className="flex items-center gap-1.5">
               <IoLogIn />
-              Sign In</Link>
+              <span className="hidden sm:inline">Sign In</span>
+            </Link>
           </Button>
           :
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Avatar>
-                <AvatarImage src={user.user?.avatar || usericon}/>
-                <AvatarFallback>CN</AvatarFallback>
+              <Avatar className="h-8 w-8 sm:h-9 sm:w-9 ring-2 ring-transparent hover:ring-[#D97748]/30 transition-all">
+                <AvatarImage src={user.user?.avatar || usericon} />
+                <AvatarFallback className="bg-[#E8A33D]/20 text-[#4A3728]">CN</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="bg-white border-[#EADFD3]">
               <DropdownMenuLabel>
-                <p>{user.user?.name}</p>
-                <p className='text-sm'>{user.user?.email}</p>
+                <p className="text-[#4A3728]">{user.user?.name}</p>
+                <p className='text-sm text-[#8C7B6B]'>{user.user?.email}</p>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild className="cursor-pointer">
+              <DropdownMenuSeparator className="bg-[#EADFD3]" />
+              <DropdownMenuItem asChild className="cursor-pointer text-[#4A3728] focus:bg-[#FFF9F2] focus:text-[#D97748]">
                 <Link to={RouteProfile}>
-                <FaUser/>
-                  profile
+                  <FaUser />
+                  Profile
                 </Link>
-                </DropdownMenuItem>
-              <DropdownMenuItem asChild  className="cursor-pointer">
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer text-[#4A3728] focus:bg-[#FFF9F2] focus:text-[#D97748]">
                 <Link to={RouteBlogAdd}>
-                <FaPlus/>
+                  <FaPlus />
                   Create Blog
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator/>
-              <DropdownMenuItem onClick={handleLogout}  className="cursor-pointer">
-                <IoLogOut color='red'/>
-                  Logout
+              <DropdownMenuSeparator className="bg-[#EADFD3]" />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#4A3728] focus:bg-[#FFF9F2]">
+                <IoLogOut color='#D97748' />
+                Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

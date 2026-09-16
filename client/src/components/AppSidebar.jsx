@@ -29,79 +29,72 @@ const AppSidebar = () => {
     Credential: 'include'
   })
 
-
   return (
-    <Sidebar>
-      <SidebarHeader className="bg-white">
-        <img src={logo} width={120} />
+    <Sidebar className="bg-[#FFF9F2] border-r border-[#EADFD3]">
+      <SidebarHeader className="bg-[#FFF9F2] px-3 py-4">
+        <img src={logo} width={110} className="max-w-full h-auto" />
       </SidebarHeader>
-      <SidebarContent className="bg-white">
+
+      <SidebarContent className="bg-[#FFF9F2]">
         <SidebarGroup>
-          <SidebarMenu>
+          <SidebarMenu className="space-y-1">
             <SidebarMenuItem>
-              <SidebarMenuButton>
-                <FaHome />
-                <Link to={RouteIndex}>Home</Link>
+              <SidebarMenuButton className="text-[#4A3728] hover:bg-[#D97748]/10 hover:text-[#D97748] transition-colors rounded-lg gap-2">
+                <FaHome className="text-[#D97748] shrink-0" />
+                <Link to={RouteIndex} className="truncate">Home</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            {user && user.isLoggedIN
-              ?
+            {user && user.isLoggedIN && (
               <>
                 <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <FaComments />
-                    <Link to={RouteCommentDetails}>Comments</Link>
+                  <SidebarMenuButton className="text-[#4A3728] hover:bg-[#D97748]/10 hover:text-[#D97748] transition-colors rounded-lg gap-2">
+                    <FaComments className="text-[#D97748] shrink-0" />
+                    <Link to={RouteCommentDetails} className="truncate">Comments</Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
                 <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <LiaBlogSolid />
-                    <Link to={RouteBlog}>Blogs</Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </>
-              :
-              <></>
-            }
-
-            {user?.isLoggedIN && user?.user?.role === 'admin' && (
-              <>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <FaUsers />
-                    <Link to={RouteUser}>Users</Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <BiSolidCategory />
-                    <Link to={RouteCategoryDetails}>Categories</Link>
+                  <SidebarMenuButton className="text-[#4A3728] hover:bg-[#D97748]/10 hover:text-[#D97748] transition-colors rounded-lg gap-2">
+                    <LiaBlogSolid className="text-[#D97748] shrink-0" />
+                    <Link to={RouteBlog} className="truncate">Blogs</Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </>
             )}
 
-
+            {user?.isLoggedIN && user?.user?.role === 'admin' && (
+              <>
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="text-[#4A3728] hover:bg-[#D97748]/10 hover:text-[#D97748] transition-colors rounded-lg gap-2">
+                    <FaUsers className="text-[#D97748] shrink-0" />
+                    <Link to={RouteUser} className="truncate">Users</Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="text-[#4A3728] hover:bg-[#D97748]/10 hover:text-[#D97748] transition-colors rounded-lg gap-2">
+                    <BiSolidCategory className="text-[#D97748] shrink-0" />
+                    <Link to={RouteCategoryDetails} className="truncate">Categories</Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </>
+            )}
           </SidebarMenu>
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[#8C7B6B] uppercase text-xs tracking-wide">
             Categories
           </SidebarGroupLabel>
-          <SidebarMenu>
+          <SidebarMenu className="space-y-1">
             {categoryData && categoryData.category.length > 0 && categoryData.category.map(category =>
               <SidebarMenuItem key={category._id}>
-                <SidebarMenuButton>
-                  <GoDotFill />
-                  <Link to={RouteBlogByCategory(category.slug)}>{category.name}</Link>
+                <SidebarMenuButton className="text-[#4A3728] hover:bg-[#E8A33D]/15 hover:text-[#E8A33D] transition-colors rounded-lg gap-2">
+                  <GoDotFill className="text-[#E8A33D] shrink-0 text-xs" />
+                  <Link to={RouteBlogByCategory(category.slug)} className="truncate">{category.name}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )
-            }
-
+            )}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

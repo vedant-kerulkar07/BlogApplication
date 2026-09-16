@@ -1,4 +1,3 @@
-
 import { getEnv } from '@/helpers/getEnv';
 import { showToast } from '@/helpers/showToast';
 import { useFetch } from '@/hooks/useFetch';
@@ -16,7 +15,7 @@ const LikeCount = ({ props }) => {
         method: 'get',
         credentials: 'include',
     })
- 
+
     useEffect(() => {
         if (blogLikeCount) {
             setLikeCount(blogLikeCount.likecount)
@@ -49,13 +48,17 @@ const LikeCount = ({ props }) => {
     }
 
     return (
-        <button onClick={handleLike} type='button' className='flex justify-between items-center gap-1'>
+        <button
+            onClick={handleLike}
+            type='button'
+            className='flex justify-center items-center gap-1.5 text-sm sm:text-base text-[#4A3728] hover:text-[#D97748] transition-colors'
+        >
             {!hasLiked ?
-                <FaRegHeart />
+                <FaRegHeart className="text-[#8C7B6B]" />
                 :
-                <FaHeart fill='red' />
+                <FaHeart className="text-[#D97748]" />
             }
-            {likeCount}
+            <span>{likeCount}</span>
         </button>
     )
 }
