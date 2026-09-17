@@ -37,7 +37,7 @@ const CommentList = ({ props }) => {
                         </Avatar>
 
                         <div className="min-w-0">
-                            <p className='font-bold text-sm sm:text-base text-[#4A3728] truncate'>{user?.user.name}</p>
+                            <p className='font-bold text-sm sm:text-base text-[#4A3728] truncate'>{user?.user?.name}</p>
                             <p className="text-xs sm:text-sm text-[#8C7B6B]">{moment(props.newComment?.createdAt).format('DD-MM-YYYY')}</p>
                             <div className='pt-2 sm:pt-3 text-sm sm:text-base text-[#4A3728] break-words'>
                                 {props.newComment?.comment}
@@ -50,11 +50,11 @@ const CommentList = ({ props }) => {
                     data.comments.map(comment => (
                         <div key={comment._id} className='flex gap-2 sm:gap-3 py-3 first:pt-0'>
                             <Avatar className="shrink-0 h-8 w-8 sm:h-9 sm:w-9">
-                                <AvatarImage src={comment?.user.avatar || usericon} className="rounded-full object-cover w-full h-full" />
+                                <AvatarImage src={comment?.user?.avatar || usericon} className="rounded-full object-cover w-full h-full" />
                             </Avatar>
 
                             <div className="min-w-0">
-                                <p className='font-bold text-sm sm:text-base text-[#4A3728] truncate'>{comment?.user.name}</p>
+                                <p className='font-bold text-sm sm:text-base text-[#4A3728] truncate'>{comment?.user?.name || 'Deleted user'}</p>
                                 <p className="text-xs sm:text-sm text-[#8C7B6B]">{moment(comment?.createdAt).format('DD-MM-YYYY')}</p>
                                 <div className='pt-2 sm:pt-3 text-sm sm:text-base text-[#4A3728] break-words'>
                                     {comment?.comment}
