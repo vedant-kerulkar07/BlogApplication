@@ -60,26 +60,15 @@ const AddBlog = () => {
 
     const formSchema = z.object({
         category: z.string().min(1, "Please select a category"),
-
-        title: z
-            .string()
-            .min(3, "Title must be at least 3 characters long"),
-
-        slug: z
-            .string()
-            .min(3, "Slug must be at least 3 characters long"),
-
+        title: z.string().min(3, "Title must be at least 3 characters long"),
+        slug: z.string().min(3, "Slug must be at least 3 characters long"),
         blogContent: z
             .string()
-            .min(
-                3,
-                "Blog content must be at least 3 characters long"
-            ),
+            .min(3, "Blog content must be at least 3 characters long"),
     });
 
     const form = useForm({
         resolver: zodResolver(formSchema),
-
         defaultValues: {
             category: "",
             title: "",
@@ -104,7 +93,6 @@ const AddBlog = () => {
                 lower: true,
                 strict: true,
             });
-
             form.setValue("slug", slug);
         } else {
             form.setValue("slug", "");
@@ -120,29 +108,19 @@ const AddBlog = () => {
             const title = form.getValues("title");
 
             if (!title || !title.trim()) {
-                return toast.error(
-                    "Please enter a blog title first"
-                );
+                return toast.error("Please enter a blog title first");
             }
 
             setGenerating(true);
 
-            console.log("🤖 Generating blog content...");
-            console.log("Blog title:", title);
-
             const response = await fetch(
-                `${getEnv(
-                    "VITE_API_BASE_URL"
-                )}/blog/generate-content`,
+                `${getEnv("VITE_API_BASE_URL")}/blog/generate-content`,
                 {
                     method: "POST",
-
                     headers: {
                         "Content-Type": "application/json",
                     },
-
                     credentials: "include",
-
                     body: JSON.stringify({
                         prompt: title.trim(),
                     }),
@@ -151,56 +129,26 @@ const AddBlog = () => {
 
             const data = await response.json();
 
-            console.log("AI Response:", data);
-
             if (!response.ok) {
                 return toast.error(
-                    data.message ||
-                    "Failed to generate blog content"
+                    data.message || "Failed to generate blog content"
                 );
             }
 
             if (!data.content) {
-                return toast.error(
-                    "AI did not return any blog content"
-                );
+                return toast.error("AI did not return any blog content");
             }
 
             const htmlContent = marked.parse(data.content);
 
-            console.log(
-                "✅ Markdown converted to HTML"
-            );
+            form.setValue("blogContent", htmlContent, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
 
-            console.log(
-                "Generated HTML:",
-                htmlContent
-            );
-
-            form.setValue(
-                "blogContent",
-                htmlContent,
-                {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                }
-            );
-
-            toast.success(
-                "Blog content generated successfully"
-            );
-
+            toast.success("Blog content generated successfully");
         } catch (error) {
-            console.error(
-                "❌ Generate content frontend error:",
-                error
-            );
-
-            toast.error(
-                error.message ||
-                "Failed to generate blog content"
-            );
-
+            toast.error(error.message || "Failed to generate blog content");
         } finally {
             setGenerating(false);
         }
@@ -212,15 +160,10 @@ const AddBlog = () => {
 
     async function onSubmit(values) {
         try {
-            // Check image
             if (!file) {
-                return showToast(
-                    "error",
-                    "Feature image is required"
-                );
+                return showToast("error", "Feature image is required");
             }
 
-            // Check user
             if (!user?.user?._id) {
                 return showToast(
                     "error",
@@ -236,15 +179,9 @@ const AddBlog = () => {
             setGenerating(true);
 
             const formData = new FormData();
-
             formData.append("file", file);
+            formData.append("data", JSON.stringify(newValues));
 
-            formData.append(
-                "data",
-                JSON.stringify(newValues)
-            );
-
-            // KEEPING YOUR ORIGINAL API ENDPOINT
             const response = await fetch(
                 `${getEnv("VITE_API_BASE_URL")}/blog/add/`,
                 {
@@ -256,46 +193,22 @@ const AddBlog = () => {
 
             const data = await response.json();
 
-            console.log(
-                "Blog submit response:",
-                data
-            );
-
             if (!response.ok) {
                 return showToast(
                     "error",
-                    data.message ||
-                    "Failed to create blog"
+                    data.message || "Failed to create blog"
                 );
             }
 
-            // Reset form
             form.reset();
-
             setFile(null);
             setPreview(null);
 
-            // Redirect
             navigate(RouteBlog);
 
-            showToast(
-                "success",
-                data.message ||
-                "Blog created successfully"
-            );
-
+            showToast("success", data.message || "Blog created successfully");
         } catch (error) {
-            console.error(
-                "❌ Blog submit error:",
-                error
-            );
-
-            showToast(
-                "error",
-                error.message ||
-                "Failed to create blog"
-            );
-
+            showToast("error", error.message || "Failed to create blog");
         } finally {
             setGenerating(false);
         }
@@ -307,10 +220,7 @@ const AddBlog = () => {
         }
 
         const selectedFile = files[0];
-
-        const preview = URL.createObjectURL(
-            selectedFile
-        );
+        const preview = URL.createObjectURL(selectedFile);
 
         setFile(selectedFile);
         setPreview(preview);
@@ -321,349 +231,202 @@ const AddBlog = () => {
     }
 
     return (
-        <div>
-            <Card className="pt-5">
+        <div className="px-3 sm:px-0">
+            <Card className="pt-5 bg-white border-[#EADFD3] shadow-sm">
                 <CardContent>
-
-                    <h1 className="text-2xl font-bold mb-4">
+                    <h1 className="text-xl sm:text-2xl font-bold mb-4 text-[#4A3728]">
                         Add Blog
                     </h1>
 
                     <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(
-                                onSubmit
-                            )}
-                        >
-
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
                             {/* Category */}
-
                             <div className="mb-3">
-
                                 <FormField
                                     control={form.control}
                                     name="category"
-
                                     render={({ field }) => (
                                         <FormItem>
-
-                                            <FormLabel>
+                                            <FormLabel className="text-[#4A3728]">
                                                 Category
                                             </FormLabel>
-
                                             <FormControl>
-
                                                 <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    value={
-                                                        field.value
-                                                    }
+                                                    onValueChange={field.onChange}
+                                                    value={field.value}
                                                 >
-
-                                                    <SelectTrigger>
+                                                    <SelectTrigger className="border-[#EADFD3] focus:ring-[#D97748]/30 text-[#4A3728]">
                                                         <SelectValue placeholder="Select category" />
                                                     </SelectTrigger>
 
-                                                    <SelectContent>
-
-                                                        {categoryData?.category?.length >
-                                                            0 ? (
-
-                                                            categoryData.category.map(
-                                                                (
-                                                                    category
-                                                                ) => (
-                                                                    <SelectItem
-                                                                        key={
-                                                                            category._id
-                                                                        }
-                                                                        value={
-                                                                            category._id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            category.name
-                                                                        }
-                                                                    </SelectItem>
-                                                                )
-                                                            )
-
+                                                    <SelectContent className="bg-white border-[#EADFD3]">
+                                                        {categoryData?.category?.length > 0 ? (
+                                                            categoryData.category.map((category) => (
+                                                                <SelectItem
+                                                                    key={category._id}
+                                                                    value={category._id}
+                                                                    className="text-[#4A3728] focus:bg-[#FFF9F2] focus:text-[#D97748]"
+                                                                >
+                                                                    {category.name}
+                                                                </SelectItem>
+                                                            ))
                                                         ) : (
-
-                                                            <SelectItem
-                                                                value="no-category"
-                                                                disabled
-                                                            >
-                                                                No categories
-                                                                available
+                                                            <SelectItem value="no-category" disabled>
+                                                                No categories available
                                                             </SelectItem>
-
                                                         )}
-
                                                     </SelectContent>
-
                                                 </Select>
-
                                             </FormControl>
-
                                             <FormMessage />
-
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
 
-
                             {/* Title */}
-
                             <div className="mb-3">
-
                                 <FormField
                                     control={form.control}
                                     name="title"
-
                                     render={({ field }) => (
                                         <FormItem>
-
-                                            <FormLabel>
+                                            <FormLabel className="text-[#4A3728]">
                                                 Title
                                             </FormLabel>
-
                                             <FormControl>
-
                                                 <Input
                                                     placeholder="Enter your blog title"
+                                                    className="border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]"
                                                     {...field}
                                                 />
-
                                             </FormControl>
-
                                             <FormMessage />
-
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
 
-
                             {/* Slug */}
-
                             <div className="mb-3">
-
                                 <FormField
                                     control={form.control}
                                     name="slug"
-
                                     render={({ field }) => (
                                         <FormItem>
-
-                                            <FormLabel>
+                                            <FormLabel className="text-[#4A3728]">
                                                 Slug
                                             </FormLabel>
-
                                             <FormControl>
-
                                                 <Input
                                                     placeholder="Slug"
+                                                    className="border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]"
                                                     {...field}
                                                 />
-
                                             </FormControl>
-
                                             <FormMessage />
-
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
 
-
                             {/* Featured Image */}
-
                             <div className="mb-5">
-
-                                <span className="mb-2 block font-medium">
+                                <span className="mb-2 block font-medium text-[#4A3728]">
                                     Featured Image
                                 </span>
 
                                 <Dropzone
-                                    onDrop={
-                                        handleFileSelection
-                                    }
+                                    onDrop={handleFileSelection}
                                     accept={{
                                         "image/*": [],
                                     }}
                                     maxFiles={1}
                                 >
+                                    {({ getRootProps, getInputProps }) => (
+                                        <div {...getRootProps()} className="cursor-pointer">
+                                            <input {...getInputProps()} />
 
-                                    {({
-                                        getRootProps,
-                                        getInputProps,
-                                    }) => (
-
-                                        <div
-                                            {...getRootProps()}
-                                            className="cursor-pointer"
-                                        >
-
-                                            <input
-                                                {...getInputProps()}
-                                            />
-
-                                            <div className="flex justify-center items-center w-36 h-28 border-2 border-dashed border-dashboard rounded overflow-hidden">
-
+                                            <div className="flex justify-center items-center w-full sm:w-36 h-28 border-2 border-dashed border-[#EADFD3] hover:border-[#D97748]/50 transition-colors rounded overflow-hidden bg-[#FFF9F2]">
                                                 {filePreview ? (
-
                                                     <img
-                                                        src={
-                                                            filePreview
-                                                        }
+                                                        src={filePreview}
                                                         alt="Featured preview"
                                                         className="w-full h-full object-cover"
                                                     />
-
                                                 ) : (
-
-                                                    <span className="text-sm text-gray-500 text-center px-2">
-
-                                                        Click or
-                                                        drop image
-
+                                                    <span className="text-sm text-[#8C7B6B] text-center px-2">
+                                                        Click or drop image
                                                     </span>
-
                                                 )}
-
                                             </div>
-
                                         </div>
                                     )}
-
                                 </Dropzone>
-
                             </div>
 
-
                             {/* Blog Content */}
-
                             <div className="mb-5">
-
                                 <FormField
                                     control={form.control}
                                     name="blogContent"
-
                                     render={({ field }) => (
-
                                         <FormItem>
-
                                             {/* AI Generate Button */}
-
                                             <div className="mb-3">
-
                                                 <Button
                                                     type="button"
                                                     size="sm"
-                                                    onClick={
-                                                        generateContent
-                                                    }
-                                                    disabled={
-                                                        generating
-                                                    }
+                                                    onClick={generateContent}
+                                                    disabled={generating}
+                                                    className="bg-[#E8A33D] hover:bg-[#d4922f] text-[#4A3728]"
                                                 >
-
                                                     {generating ? (
-
                                                         <>
-
                                                             <Loading className="mr-2" />
-
                                                             Generating...
-
                                                         </>
-
                                                     ) : (
-
                                                         "Generate Blog Description"
-
                                                     )}
-
                                                 </Button>
-
                                             </div>
 
-
                                             {/* Editor */}
-
                                             <FormControl>
-
                                                 <Editor
                                                     props={{
-                                                        initialData:
-                                                            field.value,
-
-                                                        onChange: (
-                                                            event,
-                                                            editor
-                                                        ) => {
-
-                                                            const data =
-                                                                editor.getData();
-
-                                                            field.onChange(
-                                                                data
-                                                            );
-
+                                                        initialData: field.value,
+                                                        onChange: (event, editor) => {
+                                                            const data = editor.getData();
+                                                            field.onChange(data);
                                                         },
                                                     }}
                                                 />
-
                                             </FormControl>
-
                                             <FormMessage />
-
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
 
-
                             {/* Submit */}
-
                             <Button
                                 type="submit"
-                                className="w-full"
-                                disabled={
-                                    generating
-                                }
+                                className="w-full bg-[#D97748] hover:bg-[#c2663d] text-white"
+                                disabled={generating}
                             >
-
                                 {generating ? (
-
                                     <>
-
                                         <Loading className="mr-2" />
-
                                         Submitting...
-
                                     </>
-
                                 ) : (
-
                                     "Submit"
-
                                 )}
-
                             </Button>
-
                         </form>
-
                     </Form>
-
                 </CardContent>
             </Card>
         </div>
