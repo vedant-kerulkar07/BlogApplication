@@ -35,7 +35,7 @@ const EditBlog = () => {
     Credential: 'include'
   })
 
-  const { date: blogData,loading:blogLoading } = useFetch(`${getEnv('VITE_API_BASE_URL')}/blog/edit/${blogid}`, {
+  const { date: blogData, loading: blogLoading } = useFetch(`${getEnv('VITE_API_BASE_URL')}/blog/edit/${blogid}`, {
     method: 'get',
     Credential: 'include'
   }, [blogid])
@@ -90,7 +90,7 @@ const EditBlog = () => {
 
   async function onSubmit(values) {
     try {
-      
+
       const formData = new FormData()
       formData.append('file', file)
       formData.append('data', JSON.stringify(values))
@@ -122,12 +122,12 @@ const EditBlog = () => {
     setFile(file)
     setPreview(preview)
   }
-if(blogLoading) return <Loading/>
+  if (blogLoading) return <Loading />
   return (
-    <div>
-      <Card className='pt-5 '>
+    <div className='px-3 sm:px-0'>
+      <Card className='pt-5 bg-white border-[#EADFD3] shadow-sm'>
         <CardContent>
-          <h1 className='text-2xl font-bold mb-4'>Edit Blog</h1>
+          <h1 className='text-xl sm:text-2xl font-bold mb-4 text-[#4A3728]'>Edit Blog</h1>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className='mb-3'>
@@ -136,15 +136,15 @@ if(blogLoading) return <Loading/>
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel className='text-[#4A3728]'>Category</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger>
+                          <SelectTrigger className='border-[#EADFD3] focus:ring-[#D97748]/30 text-[#4A3728]'>
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className='bg-white border-[#EADFD3]'>
                             {categoryData && categoryData.category.length > 0 && categoryData.category.map(category =>
-                              <SelectItem key={category._id} value={category._id}>{category.name}</SelectItem>
+                              <SelectItem key={category._id} value={category._id} className='text-[#4A3728] focus:bg-[#FFF9F2] focus:text-[#D97748]'>{category.name}</SelectItem>
                             )}
 
 
@@ -162,9 +162,9 @@ if(blogLoading) return <Loading/>
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title</FormLabel>
+                      <FormLabel className='text-[#4A3728]'>Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your title" {...field} />
+                        <Input placeholder="Enter your title" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -177,35 +177,35 @@ if(blogLoading) return <Loading/>
                   name="slug"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Slug</FormLabel>
+                      <FormLabel className='text-[#4A3728]'>Slug</FormLabel>
                       <FormControl>
-                        <Input placeholder="Slug" {...field} />
+                        <Input placeholder="Slug" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div>
-                <span className='mb-2 block'>Featured Image</span>
+              <div className='mb-5'>
+                <span className='mb-2 block font-medium text-[#4A3728]'>Featured Image</span>
                 <Dropzone onDrop={acceptedFiles => handleFileSelection(acceptedFiles)}>
                   {({ getRootProps, getInputProps }) => (
 
-                    <div {...getRootProps()}>
+                    <div {...getRootProps()} className='cursor-pointer'>
                       <input {...getInputProps()} />
-                      <div className='flex justify-center items-center w-36 h-28 border-2 border-dashboard rounded'>
-                        <img src={filePreview} />
+                      <div className='flex justify-center items-center w-full sm:w-36 h-28 border-2 border-dashed border-[#EADFD3] hover:border-[#D97748]/50 transition-colors rounded overflow-hidden bg-[#FFF9F2]'>
+                        <img src={filePreview} className='w-full h-full object-cover' />
                       </div>
                     </div>
                   )}
                 </Dropzone>
-                <div>
+                <div className='mt-5'>
                   <FormField
                     control={form.control}
                     name="BlogContent"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Blog Content</FormLabel>
+                        <FormLabel className='text-[#4A3728]'>Blog Content</FormLabel>
                         <FormControl>
                           <Editor props={{ initialData: field.value, onChange: handleEditorData }} />
                         </FormControl>
@@ -216,7 +216,7 @@ if(blogLoading) return <Loading/>
 
                 </div>
               </div>
-              <Button type="submit" className="w-full">Submit</Button>
+              <Button type="submit" className="w-full bg-[#D97748] hover:bg-[#c2663d] text-white">Submit</Button>
             </form>
           </Form>
         </CardContent>
