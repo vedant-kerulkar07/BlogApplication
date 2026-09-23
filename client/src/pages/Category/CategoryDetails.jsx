@@ -15,7 +15,6 @@ import {
 import { useFetch } from '@/hooks/useFetch'
 import { getEnv } from '@/helpers/getEnv'
 import Loading from '@/components/Loading'
-// import { FaEdit } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { showToast } from '@/helpers/showToast'
@@ -23,20 +22,20 @@ import { deleteData } from '@/helpers/handleDelete'
 
 const CategoryDetails = () => {
 
-  const [refreshData,setRefreshData]= useState(false)
+  const [refreshData, setRefreshData] = useState(false)
 
   const { data: categoryData, loading, error } = useFetch(`${getEnv('VITE_API_BASE_URL')}/category/all-category`, {
     method: 'get',
     Credential: 'include'
-  },[refreshData])
+  }, [refreshData])
 
-  const handleDelete = (id)=>{
+  const handleDelete = (id) => {
     const response = deleteData(`${getEnv('VITE_API_BASE_URL')}/category/delete/${id}`)
-    if(response){
+    if (response) {
       setRefreshData(!refreshData)
-      showToast('success','Data deleted')
-    }else{
-      showToast('error','Data not deleted')
+      showToast('success', 'Data deleted')
+    } else {
+      showToast('error', 'Data not deleted')
     }
   }
 
@@ -44,10 +43,10 @@ const CategoryDetails = () => {
 
   return (
     <div>
-      <Card>
+      <Card className="bg-white border-[#EADFD3] shadow-sm">
         <CardHeader>
           <div>
-            <Button asChild>
+            <Button asChild className="bg-[#D97748] hover:bg-[#c2663d] text-white">
               <Link to={RouteAddCategory}>
                 Add Category
               </Link>
@@ -55,46 +54,47 @@ const CategoryDetails = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead >Category</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Action</TableHead>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableCaption className="text-[#8C7B6B]">A list of your recent invoices.</TableCaption>
+              <TableHeader>
+                <TableRow className="border-[#EADFD3] hover:bg-[#FFF9F2]">
+                  <TableHead className="text-[#4A3728]">Category</TableHead>
+                  <TableHead className="text-[#4A3728]">Slug</TableHead>
+                  <TableHead className="text-[#4A3728]">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categoryData && categoryData.category.length > 0 ?
 
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categoryData && categoryData.category.length > 0 ?
+                  categoryData.category.map(category =>
+                    <TableRow key={category._id} className="border-[#EADFD3] hover:bg-[#FFF9F2]">
+                      <TableCell className="whitespace-nowrap text-[#4A3728]">{category.name}</TableCell>
+                      <TableCell className="text-[#8C7B6B]">{category.slug}</TableCell>
+                      <TableCell className="flex gap-3">
+                        <Button variant="outline" className="border-[#EADFD3] text-[#4A3728] hover:bg-[#D97748] hover:text-white hover:border-[#D97748]" asChild>
+                          <Link to={RouteEditCategory(category._id)}>
+                            <MdEdit />
+                          </Link>
+                        </Button>
+                        <Button onClick={() => handleDelete(category._id)} variant="outline" className="border-[#EADFD3] text-[#4A3728] hover:bg-[#D97748] hover:text-white hover:border-[#D97748]">
+                          <RiDeleteBinFill />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                  :
 
-                categoryData.category.map(category =>
-                  <TableRow key={category._id}>
-                    <TableCell >{category.name}</TableCell>
-                    <TableCell >{category.slug}</TableCell>
-                    <TableCell className="flex gap-3">
-                      <Button variant="outline" className="hover:bg-violet-500 hover:text-white" asChild>
-                        <Link to={RouteEditCategory(category._id)}>
-                          <MdEdit />
-                        </Link>
-                      </Button>
-                      <Button onClick={()=>handleDelete(category._id)} variant="outline" className="hover:bg-violet-500 hover:text-white">
-                        <RiDeleteBinFill />
-                      </Button>
+                  <TableRow className="border-[#EADFD3]">
+                    <TableCell colSpan="3" className="text-[#8C7B6B]">
+                      Data not Found
                     </TableCell>
                   </TableRow>
-                )
-                :
 
-                <TableRow>
-                  <TableCell colSpan="3">
-                    Data not Found
-                  </TableCell>
-                </TableRow>
-
-              }
-            </TableBody>
-          </Table>
+                }
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
 
       </Card>
