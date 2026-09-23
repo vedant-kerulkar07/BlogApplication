@@ -62,7 +62,7 @@ const EditCategory = () => {
         return showToast('error', data.message)
       }
 
-    
+
       showToast('success', data.message)
 
     } catch (error) {
@@ -72,8 +72,8 @@ const EditCategory = () => {
 
 
   return (
-    <div>
-      <Card className='pt-5 max-w-screen-md mx-auto'>
+    <div className='px-3 sm:px-0'>
+      <Card className='pt-5 max-w-screen-md mx-auto bg-white border-[#EADFD3] shadow-sm'>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -83,9 +83,9 @@ const EditCategory = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel className='text-[#4A3728]'>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your name" {...field} />
+                        <Input placeholder="Enter your name" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -98,16 +98,16 @@ const EditCategory = () => {
                   name="slug"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Slug</FormLabel>
+                      <FormLabel className='text-[#4A3728]'>Slug</FormLabel>
                       <FormControl>
-                        <Input placeholder="Slug" {...field} />
+                        <Input placeholder="Slug" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">Submit</Button>
+              <Button type="submit" className="w-full bg-[#D97748] hover:bg-[#c2663d] text-white">Submit</Button>
             </form>
           </Form>
         </CardContent>
