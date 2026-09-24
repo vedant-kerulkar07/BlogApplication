@@ -12,14 +12,14 @@ const Index = () => {
   })
   if (loading) return <Loading />
   return (
-    <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-10'>
+    <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 sm:gap-8 md:gap-10'>
       {blogData && blogData.blog.length > 0
 
         ?
         blogData.blog.map(blog => <BlogCard key={blog._id} props={blog} />)
         :
-        <div>Data not Found</div>
-        
+        <div className='text-[#8C7B6B]'>Data not Found</div>
+
       }
     </div>
   )
