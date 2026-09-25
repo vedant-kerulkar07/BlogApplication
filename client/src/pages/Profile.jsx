@@ -21,14 +21,13 @@ const Profile = () => {
 
     const [filePreview, setPreview] = useState()
     const [file, setFile] = useState()
-    
+
     const user = useSelector((state) => state.user)
 
-    const  { data: userData, loading, error } =  useFetch(`${getEnv('VITE_API_BASE_URL')}/user/get-user/${user?.user?._id}`,
+    const { data: userData, loading, error } = useFetch(`${getEnv('VITE_API_BASE_URL')}/user/get-user/${user?.user?._id}`,
         { method: 'get', credentials: 'include' }
     );
 
-// console.log(userData)
     const dispath = useDispatch()
 
     const formSchema = z.object({
@@ -95,7 +94,7 @@ const Profile = () => {
 
 
     return (
-        <Card className="max-w-screen-md mx-auto">
+        <Card className="max-w-screen-md mx-auto bg-white border-[#EADFD3] shadow-sm">
 
             <CardContent>
                 <div className='flex justify-center items-center mt-10'>
@@ -107,19 +106,13 @@ const Profile = () => {
 
                                 <Avatar className="w-28 h-28 relative group">
                                     <AvatarImage
-                                         src={filePreview ? filePreview : userData?.user?.avatar}
-                                        //         ? `${getEnv('VITE_API_BASE_URL')}/uploads/${userData?.user?.avatar}`
-                                        //         : undefined
-                                        // }
+                                        src={filePreview ? filePreview : userData?.user?.avatar}
                                     />
-                                    {/* <AvatarFallback>
-                                        {userData?.user?.name?.charAt(0) ?? '...'}
-                                    </AvatarFallback> */}
                                     <div className="absolute z-50 w-full h-full top-1/2 left-1/2
                             -translate-x-1/2 -translate-y-1/2  justify-center items-center
-                             bg-black bg-opacity-20 border-2 border-violet-500 rounded-full 
+                             bg-black bg-opacity-20 border-2 border-[#D97748] rounded-full 
                                  group-hover:flex hidden cursor-pointer">
-                                        <FaCamera color='#7c3aed' />
+                                        <FaCamera color='#D97748' />
                                     </div>
                                 </Avatar>
                             </div>
@@ -138,9 +131,9 @@ const Profile = () => {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Name</FormLabel>
+                                            <FormLabel className='text-[#4A3728]'>Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your name" {...field} />
+                                                <Input placeholder="Enter your name" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -154,9 +147,9 @@ const Profile = () => {
                                     name="email"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel className='text-[#4A3728]'>Email</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter your email" {...field} />
+                                                <Input placeholder="Enter your email" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -170,9 +163,9 @@ const Profile = () => {
                                     name="bio"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Bio</FormLabel>
+                                            <FormLabel className='text-[#4A3728]'>Bio</FormLabel>
                                             <FormControl>
-                                                <Textarea placeholder="Enter Bio" {...field} />
+                                                <Textarea placeholder="Enter Bio" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -186,16 +179,16 @@ const Profile = () => {
                                     name="password"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Password</FormLabel>
+                                            <FormLabel className='text-[#4A3728]'>Password</FormLabel>
                                             <FormControl>
-                                                <Input type="password" placeholder="Enter your Password" {...field} />
+                                                <Input type="password" placeholder="Enter your Password" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </div>
-                            <Button type="submit" className='w-full'>Save Changes</Button>
+                            <Button type="submit" className='w-full bg-[#D97748] hover:bg-[#c2663d] text-white'>Save Changes</Button>
                         </form>
                     </Form>
                 </div>
@@ -206,6 +199,3 @@ const Profile = () => {
 }
 
 export default Profile
-
-
-
