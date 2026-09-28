@@ -58,14 +58,14 @@ const SignUp = () => {
   }
 
   return (
-    <div className='flex justify-center items-center h-screen w-screen'>
-      <Card className='w-[400px] p-5'>
-        <h1 className='text-2x1 font-bold text-center mb-5'>Create Your Account</h1>
+    <div className='flex justify-center items-center min-h-screen w-full px-3 py-8 bg-[#FFF9F2]'>
+      <Card className='w-full max-w-sm p-5 bg-white border-[#EADFD3] shadow-sm'>
+        <h1 className='text-xl font-bold text-center mb-5 text-[#4A3728]'>Create Your Account</h1>
 
         <div className=''>
           <GoogleLogin />
-          <div className='border my-5 flex justify-center item-center'>
-            <span className='absolute bg-white text-sm'>Or</span>
+          <div className='relative border-t border-[#EADFD3] my-5 flex justify-center items-center'>
+            <span className='absolute bg-white text-sm px-2 text-[#8C7B6B]'>Or</span>
           </div>
         </div>
 
@@ -77,9 +77,9 @@ const SignUp = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className='text-[#4A3728]'>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
+                      <Input placeholder="Enter your name" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,9 +92,9 @@ const SignUp = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className='text-[#4A3728]'>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
+                      <Input placeholder="Enter your email" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -107,9 +107,9 @@ const SignUp = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className='text-[#4A3728]'>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter your Password" {...field} />
+                      <Input type="password" placeholder="Enter your Password" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -122,9 +122,9 @@ const SignUp = () => {
                 name="confirmpassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel> Confirm Password</FormLabel>
+                    <FormLabel className='text-[#4A3728]'> Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter password again " {...field} />
+                      <Input type="password" placeholder="Enter password again " className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,10 +132,10 @@ const SignUp = () => {
               />
             </div>
             <div className='mt-5'>
-              <Button type="submit" className='w-full'>Sign Up</Button>
-              <div className='mt-5 text-sm flex justify-center items-center gap-2'>
+              <Button type="submit" className='w-full bg-[#D97748] hover:bg-[#c2663d] text-white'>Sign Up</Button>
+              <div className='mt-5 text-sm flex justify-center items-center gap-2 text-[#4A3728]'>
                 <p>Already have account?</p>
-                <Link className='text-blue-500 hover:underline' to={RouteSignIn}>Sign In</Link>
+                <Link className='text-[#D97748] hover:underline' to={RouteSignIn}>Sign In</Link>
               </div>
             </div>
 

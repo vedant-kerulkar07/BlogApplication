@@ -13,54 +13,54 @@ import CommentCount from '@/components/CommentCount'
 import LikeCount from '@/components/LikeCount'
 import RelatedBlog from '@/components/RelatedBlog'
 const SingleBlogDetails = () => {
-    const { blog,category } = useParams()
+    const { blog, category } = useParams()
     const { data, loading, error } = useFetch(`${getEnv('VITE_API_BASE_URL')}/blog/get-blog/${blog}`, {
         method: 'get',
         Credential: 'include'
-    },[blog,category])
+    }, [blog, category])
 
     if (loading) return <Loading />
     return (
-        <div className='md:flex-nowrap flex-wrap flex justify-between gap-20'>
+        <div className='md:flex-nowrap flex-wrap flex justify-between gap-5 sm:gap-8 md:gap-10'>
             {data && data.blog &&
                 <>
-                    <div className='border rounded md:w-[70%] w-full p-5'>
-                        <h1 className='text-2xl font-bold mb-5'>{data.blog.title}</h1>
-                        <div className='flex justify-between items-center'>
-                            <div className='flex justify-between items-center gap-5'>
-                                <Avatar className="w-12 h-12 relative group rounded">
-                                    <AvatarImage src={data.blog.author?.avatar} />
+                    <div className='border border-[#EADFD3] bg-white rounded md:w-[70%] w-full p-4 sm:p-5'>
+                        <h1 className='text-xl sm:text-2xl font-bold mb-5 text-[#4A3728]'>{data.blog.title}</h1>
+                        <div className='flex flex-wrap justify-between items-center gap-3'>
+                            <div className='flex items-center gap-3 sm:gap-5'>
+                                <Avatar className="w-12 h-12 relative group rounded shrink-0">
+                                    <AvatarImage src={data.blog.author?.avatar} className='rounded object-cover w-full h-full' />
                                 </Avatar>
 
-                                <div>
-                                    <h2 className='text-2xl font-bold line-clamp-2'>{data.blog.author?.name}</h2>
-                                    <p className='flex items-center gap-2 mb-2'>
+                                <div className='min-w-0'>
+                                    <h2 className='text-lg sm:text-2xl font-bold line-clamp-2 text-[#4A3728]'>{data.blog.author?.name}</h2>
+                                    <p className='flex items-center gap-2 mb-2 text-[#8C7B6B] text-sm'>
                                         <BsCalendar2Date />
                                         <span>{moment(data.blog?.createdAt).format('DD-MM-YYYY')}</span>
                                     </p>
                                 </div>
                             </div>
-                        <div className='flex justify-between items-center gap-5'>
-                            <LikeCount props={{blogid:data.blog?._id}}/>
-                            <CommentCount props={{blogid:data.blog?._id}}/>
-                        </div>
+                            <div className='flex items-center gap-3 sm:gap-5 text-[#4A3728]'>
+                                <LikeCount props={{ blogid: data.blog?._id }} />
+                                <CommentCount props={{ blogid: data.blog?._id }} />
+                            </div>
                         </div>
                         <div className='my-5'>
                             <img src={data.blog.featuredImage}
-                                className='rounded'
+                                className='rounded w-full'
                             />
                         </div>
-                        <div dangerouslySetInnerHTML={{ __html: decode(data.blog?.blogContent) || '' }}>
+                        <div className='text-[#4A3728] break-words' dangerouslySetInnerHTML={{ __html: decode(data.blog?.blogContent) || '' }}>
                         </div>
-                        <div className='border-t mt-5 pt-5'>
+                        <div className='border-t border-[#EADFD3] mt-5 pt-5'>
                             <Comment props={{ blogid: data.blog._id }} />
                         </div>
                     </div>
                 </>
             }
 
-            <div className='border rounded md:w-[30%] w-full p-5'>
-                <RelatedBlog props={{category :category,currentBlog:blog}}/>
+            <div className='border border-[#EADFD3] bg-white rounded md:w-[30%] w-full p-4 sm:p-5'>
+                <RelatedBlog props={{ category: category, currentBlog: blog }} />
             </div>
         </div>
     )

@@ -17,7 +17,7 @@ import logo from "@/assets/images/logo-white.png"
 
 const SignIn = () => {
 
-const dispath = useDispatch()
+  const dispath = useDispatch()
 
   const navigate = useNavigate()
   const formSchema = z.object({
@@ -45,7 +45,7 @@ const dispath = useDispatch()
       const data = await response.json()
 
       if (!response.ok) {
-       return showToast('error', data.message)
+        return showToast('error', data.message)
       }
       dispath(setUser(data.user))
       navigate(RouteIndex)
@@ -57,20 +57,20 @@ const dispath = useDispatch()
   }
 
   return (
-    <div className='flex justify-center items-center h-screen w-screen'>
-      <Card className='w-[400px] p-5 w-full max-w-sm'>
+    <div className='flex justify-center items-center min-h-screen w-full px-3 bg-[#FFF9F2]'>
+      <Card className='p-5 w-full max-w-sm bg-white border-[#EADFD3] shadow-sm'>
         <div className='flex justify-center items-center mb-2'>
           <Link to={RouteIndex}>
-          <img src={logo} />
-        </Link>
+            <img src={logo} />
+          </Link>
         </div>
-        
-        <h1 className='text2x1 font-bold text-center mb-5'>Login Into Account</h1>
 
-          <div className=''>
+        <h1 className='text-xl font-bold text-center mb-5 text-[#4A3728]'>Login Into Account</h1>
+
+        <div className=''>
           <GoogleLogin />
-          <div className='border my-5 flex justify-center item-center'>
-            <span className='absolute bg-white text-sm'>Or</span>
+          <div className='relative border-t border-[#EADFD3] my-5 flex justify-center items-center'>
+            <span className='absolute bg-white text-sm px-2 text-[#8C7B6B]'>Or</span>
           </div>
         </div>
 
@@ -82,9 +82,9 @@ const dispath = useDispatch()
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className='text-[#4A3728]'>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
+                      <Input placeholder="Enter your email" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -98,9 +98,9 @@ const dispath = useDispatch()
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className='text-[#4A3728]'>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter your Password" {...field} />
+                      <Input type="password" placeholder="Enter your Password" className='border-[#EADFD3] focus-visible:ring-[#D97748]/30 text-[#4A3728]' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -108,10 +108,10 @@ const dispath = useDispatch()
               />
             </div>
             <div className='mt-5'>
-              <Button type="submit" className='w-full'>Sign In</Button>
-              <div className='mt-5 text-sm flex justify-center items-center gap-2'>
+              <Button type="submit" className='w-full bg-[#D97748] hover:bg-[#c2663d] text-white'>Sign In</Button>
+              <div className='mt-5 text-sm flex justify-center items-center gap-2 text-[#4A3728]'>
                 <p>Don&apos;t have account?</p>
-                <Link className='text-blue-500 hover:underline' to={RouteSignUp}>Sign Up</Link>
+                <Link className='text-[#D97748] hover:underline' to={RouteSignUp}>Sign Up</Link>
               </div>
             </div>
 
